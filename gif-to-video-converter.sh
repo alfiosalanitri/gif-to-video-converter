@@ -1,20 +1,20 @@
 #!/bin/bash
 #
 # NAME
-# 	gif-to-video-converter - Convert a gif file or gif url to mp4|webp|ogv with ffmpeg.
+# gif-to-video-converter - Convert a gif file or gif url to mp4|webp|ogv with ffmpeg.
 #
 # SYNOPSIS
-#	gif-to-video-converter file.gif|url/file.gif -cover
+# gif-to-video-converter file.gif|url/file.gif -cover
 #
 # INSTALLATION
-#	sudo chmod +x /path/to/gif-to-video-converter
+# sudo chmod +x /path/to/gif-to-video-converter
 #
 # REQUIREMENTS
-#	- ffmpeg and wget packages 
+# - ffmpeg and wget packages 
 # - convert only if option -cover exists
 #
 # AUTHOR:
-#	gif-to-video-converter is written by Alfio Salanitri <www.alfiosalanitri.it> and are licensed under MIT license.
+# gif-to-video-converter is written by Alfio Salanitri <www.alfiosalanitri.it> and are licensed under MIT license.
 #
 
 #############################################################
@@ -49,7 +49,7 @@ GIF=$1
 # cover option
 cover=no
 if [ $# -eq 2 ] && [ $2 == "-cover" ]; then
-	cover=yes
+  cover=yes
 fi
 
 if ! command -v ffmpeg &> /dev/null; then
