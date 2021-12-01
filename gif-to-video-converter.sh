@@ -4,13 +4,14 @@
 # 	gif-to-video-converter - Convert a gif file or gif url to mp4|webp|ogv with ffmpeg.
 #
 # SYNOPSIS
-#	gif-to-video-converter file.gif|url/file.gif
+#	gif-to-video-converter file.gif|url/file.gif -cover
 #
 # INSTALLATION
 #	sudo chmod +x /path/to/gif-to-video-converter
 #
 # REQUIREMENTS
 #	- ffmpeg and wget packages 
+# - convert only if option -cover exists
 #
 # AUTHOR:
 #	gif-to-video-converter is written by Alfio Salanitri <www.alfiosalanitri.it> and are licensed under MIT license.
@@ -33,8 +34,8 @@ icon_rocket='\xF0\x9F\x9A\x80'
 # Usage
 if [ $# -eq 0 ]; then
   cat <<-EOF
-  Usage: $0 input_file
-  Convert a gif to mp4|webp|ogv with ffmpeg.
+  Usage: $0 input_file -cover
+  Convert a gif to mp4|webp|ogv with ffmpeg. If -cover option exists, the first gif frame will be saved
 
   input_file  | A valid gif file to convert. If given a URI, this script will
   try to download it for you and then convert it.
@@ -44,6 +45,12 @@ fi
 
 # user input gif
 GIF=$1
+
+# cover option
+cover=no
+if [ $# -eq 2 ] && [ $2 == "-cover" ]; then
+	cover=yes
+fi
 
 if ! command -v ffmpeg &> /dev/null; then
   printf "[${red}${icon_ko}${nocolor}] Sorry, but ${green}ffmpeg${nocolor} is required. Install it with apt install ffmpeg.\n"
@@ -98,6 +105,21 @@ printf "[${yellow}${icon_wait}${nocolor}] converting mp4 to ogv...\n"
 ffmpeg -i "$GIF.mp4" -vcodec libtheora -q:v 2 "$GIF.ogv" >/dev/null 2>&1
 printf "[${green}${icon_ok}${nocolor}] Ogv saved.\n"
 echo ""
+
+# save cover if yes
+if [ "yes" == "$cover" ]; then
+  if ! command -v convert &> /dev/null; then
+    printf "[${red}${icon_ko}${nocolor}] Sorry, but ${green}covert${nocolor} is required. Install it with apt install convert.\n"
+    exit 1;
+  fi
+  printf "[${yellow}${icon_wait}${nocolor}] extracting cover from gif...\n"
+  convert -coalesce ${GIF} "${GIF}".jpg
+  #keep only first frame
+  mv "${GIF}-0.jpg" "${GIF}.jpg"
+  rm ${GIF}-*
+  printf "[${green}${icon_ok}${nocolor}] cover saved.\n"
+  echo ""
+fi
 
 # end
 printf "\n\n ${icon_rocket} That's all!\n"
